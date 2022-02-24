@@ -1,0 +1,12 @@
+{
+  "name": "@rs-components/rs-test",
+  "description": "",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@rs-components/rs-table": "^1.0.0"
+  }
+}
