@@ -43,7 +43,7 @@ export class RsTable extends React.Component<RsTableProps, State>{
 
     private initState = (props: RsTableProps): State =>{
         // 不显示行号
-        const rowNumberWidth = typeof props.showRowNumbers === 'undefined' || props.showRowNumbers ? 40 : 0;
+        const rowNumberWidth = this.showRowNum() ? 40 : 0;
         return {
             headers: [],
             gridRect: {width: 0, height: 0, left: 0, top: 0},
@@ -204,18 +204,25 @@ export class RsTable extends React.Component<RsTableProps, State>{
     }
 
     //
-    private showPage = () =>{
+    private showPage = (): boolean =>{
         const {pageOption} = this.props;
-        return typeof pageOption === 'undefined' || pageOption
+        return !(pageOption === false);
+    }
+
+    private showRowNum = (): boolean =>{
+        const {rowNum} = this.props;
+        return !(rowNum === false);
     }
 
     render() {
         const {
-            showColResize,
             minRowHeight,
             minColWidth,
             rows,
-            pageOption
+            pageOption,
+            colItemRender,
+            headItemRender,
+            emptyRender
         } = this.props;
         const {
             headers,
@@ -232,13 +239,16 @@ export class RsTable extends React.Component<RsTableProps, State>{
             scroll: scroll,
             updatePerfectScroll: (updateFunc) =>{
                 this.updatePerfectScroll = updateFunc
-            }
+            },
+            colItemRender: colItemRender,
+            headItemRender: headItemRender,
+            emptyRender: emptyRender
         }
         return (
             <ResizeObserver onResize={this.gridResize}>
                 <div id={this.gridId} className={`rs-grid-main`}>
                     {
-                      rowNumberWidth === 0 ? '' : (
+                      this.showRowNum() ? (
                           <GridRowNum headHeight={this.getHeadHeight()}
                                       scrollTop={scroll.scrollTop}
                                       gridRect={gridRect}
@@ -246,11 +256,11 @@ export class RsTable extends React.Component<RsTableProps, State>{
                                       rowNumberChange={this.rowNumberChange}
                                       rowNumberWidth={rowNumberWidth}
                                       minRowHeight={minRowHeight || this.defRowHeight}
-                                      footerHeight={this.paginationHeight}
+                                      footerHeight={this.showPage() ? this.paginationHeight : 0}
                                       rowNumberWidthChange={this.rowNumberWidthChange}
                                       rowNumberLen={rows.length}
                                       rowNumbers={rowNumbers}/>
-                      )
+                      ) : ''
                     }
                     <div className="rs-grid-context" style={{width: `calc(100% - ${rowNumberWidth}px)`}}>
                         <GridHeader {...contextValue}
@@ -278,7 +288,11 @@ export class RsTable extends React.Component<RsTableProps, State>{
                                 {GridRowItem}
                             </VariableSizeGrid>
                         </GridContext.Provider>
-                        <GridPagination height={this.paginationHeight} {...pageOption}/>
+                        {
+                            this.showPage() ? (
+                                <GridPagination height={this.paginationHeight} {...pageOption}/>
+                            ) : ''
+                        }
                     </div>
                 </div>
             </ResizeObserver>

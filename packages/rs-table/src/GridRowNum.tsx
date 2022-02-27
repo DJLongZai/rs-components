@@ -25,6 +25,7 @@ type Props = {
     rowNumberWidthChange: (width: number) => void
     rowNumberChange:(rowNumber: RowNumber, index: number) => void
     onScrollTop: (top: number)=> void
+    itemRender?: (num: number) => React.ReactNode
 }
 
 type State = {
@@ -183,7 +184,8 @@ export class GridRowNum extends React.Component<Props, State> {
             rowNumbers,
             scrollTop,
             rowNumberWidth,
-            footerHeight
+            footerHeight,
+            itemRender
         } = this.props;
         const {
             rowResize,
@@ -226,7 +228,11 @@ export class GridRowNum extends React.Component<Props, State> {
                                      style={colStyle}
                                      className={`rs-grid-row-num-item`}
                                 >
-                                    <div className={`rs-num-value`}>{rn.index}</div>
+                                    {
+                                        itemRender ? (
+                                            itemRender(rn.index)
+                                        ) : <div className={`rs-num-value`}>{rn.index}</div>
+                                    }
                                     <div className={`col-resize`}
                                          style={colStyle}
                                          onMouseDown={this.colResizeHandler}/>

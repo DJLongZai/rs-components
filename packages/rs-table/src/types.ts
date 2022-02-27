@@ -14,16 +14,18 @@ type RowNumber = {
     height: number
     highlight: boolean
 }
-
+type colItemRender = (col: number, row: number,data: RsRow[], headers: Header[])=> React.ReactNode;
+type headItemRender = (headers: Header)=> React.ReactNode;
 interface GridContextType {
     headers: Header[]
     headHeight: number
     rowLen: number
     scroll: Scroll
     onScroll: (scroll: Scroll) => void
-    headItemRender?: (headers: Header)=> React.ReactNode
-    emptyRender?: React.ReactNode
     updatePerfectScroll?:(updateFunc: (scroll: Scroll) => void) => void
+    emptyRender?: React.ReactNode
+    colItemRender?: colItemRender
+    headItemRender?: headItemRender
 }
 
 type Scroll = {scrollTop:number,scrollLeft: number}
@@ -42,9 +44,14 @@ type RsPageOption = {
     pageSize?: number
     pageSizeOptions?: number[]
     total?: number
-    onChange?: () => void
-    onPageSizeChange?: () => void
+    onChange?: (page: number, size: number) => void
+    onPageSizeChange?: (page: number, size: number) => void
     className?: string
+}
+
+type RsRowNum = {
+    className?: string
+    render?: () => React.ReactNode
 }
 
 interface RsTableProps {
@@ -54,11 +61,14 @@ interface RsTableProps {
     headHeight?: number
     minRowHeight?: number
     minColWidth?: number
-    emptyRender?: React.ReactNode
     showColResize?: boolean
     showRowResize?: boolean
     showRowNumbers?: boolean
+    rowNum?: RsRowNum | boolean
     pageOption?: RsPageOption | boolean
+    emptyRender?: React.ReactNode
+    colItemRender?: colItemRender
+    headItemRender?: headItemRender
 }
 
 export type {

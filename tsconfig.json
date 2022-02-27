@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "module": "commonjs",
     "declaration": true,
     "noImplicitAny": false,
@@ -11,7 +12,8 @@
     "sourceMap": true,
     "lib": [
       "es6"
-    ]
+    ],
+    "allowSyntheticDefaultImports": true
   },
   "exclude": [
     "node_modules",

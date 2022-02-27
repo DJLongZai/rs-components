@@ -22,7 +22,9 @@ export const GridRowItem = React.memo((props: GridChildComponentProps) => {
              style={{...style,top}}
              key={`${columnIndex}-${rowIndex}`}
         >
-            <div className="value">{value}</div>
+            {
+                context.colItemRender ? context.colItemRender(rowIndex, columnIndex, data, headers) : <div className="value">{value}</div>
+            }
         </div>
     )
 })

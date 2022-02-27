@@ -54,28 +54,25 @@ export const GridPagination = (props: PageOption) => {
     useEffect(() =>{
         setPageSize(() => props.pageSize || pageOptionDef.pageSize)
     }, [props.pageSize]);
-
+    const onChange = (page: number, pageSize: number) =>{
+        setCurrent(page);
+        props.onChange?.(page, pageSize)
+    }
     // 上一页
     const prev = () =>{
-        setCurrent(v => {
-            if(v - 1 < 1){
-                return v;
-            }
-            return v - 1;
-        });
+        if(current - 1 > 1){
+            onChange(current - 1 , pageSize);
+        }
     }
     // 下一页
     const next = () =>{
-        setCurrent(v => {
-            if(v + 1 > lastPage){
-                return v;
-            }
-            return v + 1;
-        });
+        if(current + 1 < lastPage){
+            onChange(current + 1 , pageSize);
+        }
     }
     // 固定页
     const changePage = (page: number) =>{
-        setCurrent(page);
+        onChange(page, pageSize);
     }
     // 上一页 禁用
     const prevDisabled = (): boolean => {
@@ -95,23 +92,23 @@ export const GridPagination = (props: PageOption) => {
     const lastFivePage = (): boolean => current >= lastPage - 2;
     // 向前5页
     const prevFivePage = () => {
-        setCurrent((v) =>{
-            if(v - 5 >= 1){
-                return v - 5;
-            }else{
-                return 1;
-            }
-        })
+        if(current - 5 >= 1){
+            onChange(current - 5, pageSize);
+        } else{
+            onChange(1, pageSize);
+        }
     }
     // 向后5页
     const nextFivePage = () => {
-        setCurrent((v) =>{
-            if(v + 5 <= lastPage){
-                return v + 5;
-            }else{
-                return lastPage;
-            }
-        })
+        if(current + 5 <= lastPage){
+            onChange(current + 5, pageSize);
+        } else{
+            onChange(lastPage, pageSize);
+        }
+    }
+
+    const changePageSize = (v: number) => {
+        props.onPageSizeChange?.(current, v);
     }
 
     return (
@@ -180,13 +177,13 @@ export const GridPagination = (props: PageOption) => {
                 <span>∟</span>
             </li>
             <li className="dropdown-pages">
-                <Select defValue={pageSize} options={pageSizeOptions}/>
+                <Select defValue={pageSize} options={pageSizeOptions} onChange={changePageSize}/>
             </li>
         </ul>
     )
 }
 
-const Select = (props: {defValue: number,options: number[]}) =>{
+const Select = (props: {defValue: number,options: number[], onChange: (size: number)=> void}) =>{
     const [value, setValue] = useState<number>(props.defValue);
     const [open, setOpen] = useState<boolean>(false);
     const [selectorWidth, setSelectorWidth] = useState<number>(80);
@@ -197,9 +194,10 @@ const Select = (props: {defValue: number,options: number[]}) =>{
     const onChange = (v: number) => {
         setValue(v);
         setOpen(false);
+        props.onChange(v);
     }
 
-    const onVisibility = (event: React.MouseEvent) => {
+    const onVisibility = () => {
         setOpen( v =>{
             if(v){
                 return false;
@@ -239,7 +237,7 @@ const Select = (props: {defValue: number,options: number[]}) =>{
                 </div>
                 <div className="rs-select-dropdown"
                      ref={dropDownRef}
-                     style={{width: selectorWidth, top: dropDownTop, opacity: open ? 1 : 0}}>
+                     style={{width: selectorWidth, top: dropDownTop, opacity: open ? 1 : 0, zIndex: open ? 1 : -1}}>
                     {
                         props.options.map(item =>{
                             return (

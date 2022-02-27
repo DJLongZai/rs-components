@@ -13,7 +13,7 @@ function App() {
     return (
         <div className="App">
             <div style={{width: 100,height: 100}}/>
-            <RsTable headers={heads} rows={row} pageOption={{total: 3000}}/>
+            <RsTable headers={heads} rows={row} pageOption={false} rowNum={true}/>
         </div>
     )
 }
